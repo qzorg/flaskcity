@@ -1,0 +1,23 @@
+<!doctype html>
+<head>
+<title>{{ title }}</title>
+<link relstylesheet type=text/css href="style.css">
+<div class="loggedin">
+    {% if username %}
+        <p>Logged in as {{ username }} </p>
+    {% else %}
+        <p> Not logged in. Click <a href="/login">here</a> to log in.</p>
+    {% endif %}
+{% block header %}
+
+{% endblock %}
+</head>
+<body>
+{% block body %}
+
+{% endblock %}
+</body>
+{% block footer %}
+
+{% endblock %}
+

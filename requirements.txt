@@ -1,0 +1,8 @@
+Flask==0.10.1
+Flask-SQLAlchemy==2.1
+sqlalchemy==1.1.9
+flask-bcrypt
+bcrypt
+Flask-Migrate
+flask_script
+

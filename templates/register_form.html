@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+    <h3> Register </h3>
+
+    <form action = "{{ request.path }}" method = "post">
+        <label for = "username">Username</label>
+            <input type = "text" name = "username" placeholder="Username"/>
+        <label for = "email"> Email </label>
+            <input type = "text" name="email"/>
+        <label for ="password">Password</label>
+            <input type = "password" name="password"/>
+        <label for ="password_check">Password (again)</label>
+            <input type = "password" name="password_check"/>
+        <input type="submit" value = "Submit"/>
+    </form>
+
+
+
+{% endblock %}

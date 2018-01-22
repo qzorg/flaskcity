@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+
+
+    <form action = "{{ request.path }}" method = "post">
+        <label for = "title"> Site Title </label>
+            <input type = "text" name = "title"/>
+        <label for="sitefiles"> Site Directory, including images and directory structure, in a .tar.gz format. (tar czvf mysite.tar.gz mysite/)</label>
+            <input type = "file" name = "sitefile"/>
+        <input type="submit" vlue = "Submit"/> 
+    </form>
+
+{% endblock %}
