@@ -3,6 +3,25 @@ from models import Users, Sites
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from flask import session
+import os
+from config import *
+import tarfile
+
+
+def create_site(file, sitename):
+    tarname = "static/usersites/" + file.filename
+    print tarname
+    tar = tarfile.open(tarname, "r:")
+    tar.extractall(path="static/usersites/"+sitename+"/")
+    tar.close()
+def check_sitename(sitename):
+    if db.session.query(Sites).filter_by(sitename=sitename).first():
+        return False
+    return True
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def check_logged_in():
     if 'username' in session:
@@ -38,8 +57,8 @@ def usercreate(username, email, password):
         return 1
     return 3
 
-      
-            
+
+
 
 
 

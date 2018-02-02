@@ -3,11 +3,11 @@
 
 
 from flask import Flask, request, redirect, render_template, session, redirect, url_for, escape, request, flash
-
+from werkzeug.utils import secure_filename
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
-
+from functools import wraps
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -18,7 +18,15 @@ from util import *
 db.create_all()
 db.session.commit()
 
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not check_logged_in():
+            print "login failure"
+            return redirect(url_for('login_handeler'))
+        return f(*args, **kwargs)
     
+    return decorated
 
 @app.route('/')
 def index_handeler():
@@ -80,30 +88,92 @@ def logout_handeler():
     flash('You are now successfully logged out')
     return render_template('logout.html')
 
+
 @app.route('/dashboard', methods = ['GET'])
+@requires_auth
 def dashboard_handeler():
-    if check_logged_in:
+    '''if check_logged_in():
         username = check_logged_in()
         return render_template("dashboard.html", username=username)
     else:
-        return redirect(url_for('login_handeler'))
+        return redirect(url_for('login_handeler'))'''
+    username = check_logged_in()
+    return render_template("dashboard.html", username=username)
 
-@app.route('/new_site', methods = ['GET', 'POST'])
+@app.route('/dashboard/new_site', methods = ['GET', 'POST'])
+@requires_auth
 def new_site_handeler():
-    if request.method == "POST":
+    if request.method == 'POST':
+        uploaded_files = request.files['file']
+        print uploaded_files
+        if 'file' not in request.files:
+            flash('no file part')
+            return redirect(request.url)
+        elif not request.form['sitename'] and check_sitename(request.form['sitename']):
+            flash('unique title required')
+            return redirect(request.url)
+        
+        file = request.files['file']
+        sitename = request.form['sitename']
+        if file.filename == '':
+            flash('no selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            file.save(os.path.join('static/usersites/',secure_filename(file.filename)))
+            create_site(file, sitename)
+            flash("site uploaded")
+            return redirect(request.url)
+    username = check_logged_in()
+    return render_template('new_site.html', username=username)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ''''if request.method == "POST":
+
         if not request.form['title']:
             flash("Please title your site")
+            return render_template('new_site.html', username=check_logged_in())
         else:
-            if check_logged_in():
-                pass
-            else:
-                return redirect(url_for('login_handeler'))
+            
+            username = check_logged_in()
+            title = request.form['title']
+            if 'sitefile' not in request.files:
+                return redirect(url_for('dashboard_handeler'))
+            file = request.files['sitefile']
+            if file.filename == "":
+                print file.filename
+                print sitename                    
+                flash('malformed file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join('static/usersites/', filename))
+                flash('site created, ', title)
+               
+                return redirect(url_for('dashboard_handeler'))
+                
+                        
+        
     else:
         if check_logged_in():
             username = check_logged_in()
+            print username
             return render_template('new_site.html', username = username)
         else:
             return redirect(url_for('login_handeler'))
+
+        '''
 if __name__ == '__main__':
         print(' * Database is', SQLALCHEMY_DATABASE_URI)
         print(' * Running on http://localhost:5000/ (Press Ctrl-C to quit)')

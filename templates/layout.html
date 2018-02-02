@@ -4,7 +4,7 @@
 <link relstylesheet type=text/css href="style.css">
 <div class="loggedin">
     {% if username %}
-        <p>Logged in as {{ username }} </p>
+    <p>Logged in as {{ username }}, <a href="/logout">logout</a> </p>
     {% else %}
         <p> Not logged in. Click <a href="/login">here</a> to log in.</p>
     {% endif %}

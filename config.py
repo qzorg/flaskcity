@@ -8,3 +8,5 @@ MAX_SITES = "0"
 MAX_SITES_PER_USER = "0"
 MAX_SITE_TOTAL_SIZE = "0" #in megabytes
 
+UPLOAD_FOLDER = 'static/usersites/'
+ALLOWED_EXTENSIONS = set(['tar','tar.gz'])
